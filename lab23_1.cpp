@@ -3,6 +3,7 @@
 #include<vector>
 #include<string>
 #include<cstdlib>
+#include<sstream>
 
 using namespace std;
 
@@ -20,22 +21,62 @@ string toUpperStr(string x){
     return y;
 }
 
-void importDataFromFile(){
-
+void importDataFromFile(string filename, vector<string> &names, vector<int> &scores, vector<char> &grades){
+    ifstream file(filename);
+    string line;
+    while(getline(file, line)){
+        stringstream ss(line);
+        string name;
+        int score1, score2, score3;
+        getline(ss, name, ':');
+        ss >> score1 >> score2 >> score3;
+        names.push_back(name);
+        int totalScore = score1 + score2 + score3;
+        scores.push_back(totalScore);
+        grades.push_back(score2grade(totalScore));
+    }
+    file.close();
 }
 
-void getCommand(){
-
+void getCommand(string &command, string &key){
+    cout << "Please input your command: ";
+    cin >> command;
+    getline(cin, key);
+    if (!key.empty() && key[0] == ' ') key.erase(0, 1);
+    cout << endl;
 }
 
-void searchName(){
-
+void searchName(vector<string> &names, vector<int> &scores, vector<char> &grades, string key){
+    bool found = false;
+    cout << "---------------------------------\n";
+    for(size_t i = 0; i < names.size(); i++){
+        if(toUpperStr(names[i]) == key){
+            cout << names[i] << "'s score = " << scores[i] << "\n";
+            cout << names[i] << "'s grade = " << grades[i] << "\n";
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        cout << "Cannot found.\n";
+    }
+    cout << "---------------------------------\n";
 }
 
-void searchGrade(){
-
+void searchGrade(vector<string> &names, vector<int> &scores, vector<char> &grades, string key){
+    bool found = false;
+    cout << "---------------------------------\n";
+    for(size_t i = 0; i < grades.size(); i++){
+        if(grades[i] == key[0]){
+            cout << names[i] << " (" << scores[i] << ")\n";
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "Cannot found.\n";
+    }
+    cout << "---------------------------------\n";
 }
-
 
 int main(){
     string filename = "name_score.txt";
